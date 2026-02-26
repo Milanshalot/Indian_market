@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import useSWR from 'swr'
+import SimpleAnalysisPanel from '../components/SimpleAnalysisPanel'
 
 interface Stock {
   symbol: string
@@ -130,9 +131,10 @@ export default function Home() {
   const [searchQuery, setSearchQuery] = useState('')
   const [selectedStock, setSelectedStock] = useState<Stock | null>(null)
   
-  const { data, error, mutate } = useSWR<MarketData>('/api/market-data', fetcher, {
-    refreshInterval: 60000,
-    revalidateOnFocus: true
+  const { data, error, mutate } = useSWR<MarketData>('/api/market-data-fast', fetcher, {
+    refreshInterval: 30000, // Refresh every 30 seconds (faster)
+    revalidateOnFocus: true,
+    dedupingInterval: 10000 // Prevent duplicate requests within 10 seconds
   })
 
   useEffect(() => {
@@ -170,7 +172,7 @@ export default function Home() {
         <div className={`market-status ${marketOpen ? 'market-open' : 'market-closed'}`}>
           {marketOpen ? '🟢 Market Open' : '🔴 Market Closed'}
         </div>
-        <p style={{ marginTop: '10px', color: '#6b7280' }}>
+        <p style={{ marginTop: '10px', color: '#6b7280' }} suppressHydrationWarning>
           Last Updated: {lastUpdate.toLocaleTimeString('en-IN')}
         </p>
         <button className="refresh-btn" onClick={() => mutate()}>
@@ -569,7 +571,7 @@ export default function Home() {
             <div className="modal-overlay" onClick={() => setSelectedStock(null)}>
               <div className="modal-content" onClick={(e) => e.stopPropagation()}>
                 <div className="modal-header">
-                  <h2>{selectedStock.symbol} - Technical Analysis</h2>
+                  <h2>{selectedStock.symbol} - Advanced Analysis</h2>
                   <button className="modal-close" onClick={() => setSelectedStock(null)}>✕</button>
                 </div>
                 <div className="modal-body">
@@ -579,6 +581,9 @@ export default function Home() {
                       {selectedStock.change >= 0 ? '+' : ''}{selectedStock.changePercent.toFixed(2)}%
                     </div>
                   </div>
+
+                  {/* NEW: AI Analysis Panel */}
+                  <SimpleAnalysisPanel symbol={selectedStock.symbol} />
                   
                   <div className="technical-indicators">
                     <div className="indicator-item">
