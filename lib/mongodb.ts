@@ -1,5 +1,5 @@
 // MongoDB Connection Utility
-import { MongoClient, Db } from 'mongodb'
+import { MongoClient, Db, Document } from 'mongodb'
 
 if (!process.env.MONGODB_URI) {
   throw new Error('Please add your MongoDB URI to .env.local')
@@ -39,7 +39,7 @@ export async function getDatabase(dbName: string = 'indian-stock-market'): Promi
 }
 
 // Helper function to get collection
-export async function getCollection<T = any>(collectionName: string) {
+export async function getCollection<T extends Document = Document>(collectionName: string) {
   const db = await getDatabase()
   return db.collection<T>(collectionName)
 }
