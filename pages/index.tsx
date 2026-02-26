@@ -131,8 +131,8 @@ export default function Home() {
   const [searchQuery, setSearchQuery] = useState('')
   const [selectedStock, setSelectedStock] = useState<Stock | null>(null)
   
-  const { data, error, mutate } = useSWR<MarketData>('/api/market-data-fast', fetcher, {
-    refreshInterval: 30000, // Refresh every 30 seconds (faster)
+  const { data, error, mutate } = useSWR<MarketData>('/api/market-data', fetcher, {
+    refreshInterval: 60000, // Refresh every 60 seconds
     revalidateOnFocus: true,
     dedupingInterval: 10000 // Prevent duplicate requests within 10 seconds
   })
