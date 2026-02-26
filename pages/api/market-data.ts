@@ -3,6 +3,7 @@ import axios from 'axios'
 import { RSI, MACD } from 'technicalindicators'
 import { detectCandlestickPatterns, detectChartPatterns, analyzeBuyerSellerPressure } from '../../utils/technicalAnalysis'
 import { detectOperatorGame, calculateOperatorStrength } from '../../utils/operatorAnalysis'
+import { generateOptionRecommendation, getNextExpiryDate, getDaysToExpiry, calculateOptionGreeks } from '../../utils/optionCalculator'
 import { getOptionChainAnalysis, OptionChainAnalysis } from '../../utils/optionChainAnalysis'
 
 // All NSE stocks
@@ -393,6 +394,8 @@ function generateIndexRecommendations(
 
 function generateStockRecommendations(fnoStocks: StockData[]) {
   const recommendations: any[] = []
+  const expiryDate = getNextExpiryDate()
+  const daysToExpiry = getDaysToExpiry()
 
   // Operator game stocks
   const operatorGameStocks = fnoStocks
@@ -406,6 +409,20 @@ function generateStockRecommendations(fnoStocks: StockData[]) {
 
   operatorGameStocks.forEach(stock => {
     const game = stock.operatorGame
+    const optionRec = generateOptionRecommendation(
+      stock.symbol,
+      stock.price,
+      game.action,
+      6,
+      4
+    )
+    const greeks = calculateOptionGreeks(
+      stock.price,
+      optionRec.strikePrice,
+      game.action === 'BUY' ? 'CALL' : 'PUT',
+      daysToExpiry
+    )
+    
     recommendations.push({
       symbol: stock.symbol,
       name: stock.name,
@@ -414,7 +431,18 @@ function generateStockRecommendations(fnoStocks: StockData[]) {
       entry: stock.price,
       target: game.action === 'BUY' ? stock.price * 1.06 : stock.price * 0.94,
       stopLoss: game.action === 'BUY' ? stock.price * 0.96 : stock.price * 1.04,
-      reason: `🎯 OPERATOR GAME: ${game.type} - ${game.description}`
+      reason: `🎯 OPERATOR GAME: ${game.type} - ${game.description}`,
+      option: {
+        strikePrice: optionRec.strikePrice,
+        optionType: optionRec.optionType,
+        premium: optionRec.premium,
+        breakeven: optionRec.breakeven,
+        maxProfit: optionRec.maxProfit,
+        maxLoss: optionRec.maxLoss,
+        expiry: expiryDate,
+        strategy: optionRec.strategy,
+        greeks
+      }
     })
   })
 
@@ -429,6 +457,20 @@ function generateStockRecommendations(fnoStocks: StockData[]) {
     const signal = stock.technicalSignals?.find(s => s.signal === (isBullish ? 'BULLISH' : 'BEARISH'))
     
     if (signal) {
+      const optionRec = generateOptionRecommendation(
+        stock.symbol,
+        stock.price,
+        isBullish ? 'BUY' : 'SELL',
+        4,
+        2
+      )
+      const greeks = calculateOptionGreeks(
+        stock.price,
+        optionRec.strikePrice,
+        isBullish ? 'CALL' : 'PUT',
+        daysToExpiry
+      )
+      
       recommendations.push({
         symbol: stock.symbol,
         name: stock.name,
@@ -437,7 +479,18 @@ function generateStockRecommendations(fnoStocks: StockData[]) {
         entry: stock.price,
         target: isBullish ? stock.price * 1.04 : stock.price * 0.96,
         stopLoss: isBullish ? stock.price * 0.98 : stock.price * 1.02,
-        reason: `📊 ${signal.pattern}: ${signal.description} | RSI: ${stock.rsi?.toFixed(0)}`
+        reason: `📊 ${signal.pattern}: ${signal.description} | RSI: ${stock.rsi?.toFixed(0)}`,
+        option: {
+          strikePrice: optionRec.strikePrice,
+          optionType: optionRec.optionType,
+          premium: optionRec.premium,
+          breakeven: optionRec.breakeven,
+          maxProfit: optionRec.maxProfit,
+          maxLoss: optionRec.maxLoss,
+          expiry: expiryDate,
+          strategy: optionRec.strategy,
+          greeks
+        }
       })
     }
   })

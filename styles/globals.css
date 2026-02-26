@@ -1314,3 +1314,137 @@ body {
     text-align: left;
   }
 }
+
+/* Option Details Styling */
+.option-details {
+  margin-top: 20px;
+  padding: 15px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+}
+
+.option-details h4 {
+  margin-bottom: 15px;
+  font-size: 1.1rem;
+  color: white;
+}
+
+.option-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  margin-bottom: 15px;
+}
+
+.option-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 12px;
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 6px;
+}
+
+.option-label {
+  font-size: 0.85rem;
+  opacity: 0.9;
+}
+
+.option-value {
+  font-weight: 700;
+  font-size: 0.9rem;
+}
+
+.option-value.call {
+  color: #10b981;
+}
+
+.option-value.put {
+  color: #ef4444;
+}
+
+.option-value.profit {
+  color: #10b981;
+}
+
+.option-value.loss {
+  color: #ef4444;
+}
+
+.greeks-section {
+  margin-top: 15px;
+  padding-top: 15px;
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.greeks-section h5 {
+  margin-bottom: 10px;
+  font-size: 0.95rem;
+  color: white;
+}
+
+.greeks-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+}
+
+.greek-item {
+  padding: 8px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+  text-align: center;
+  font-size: 0.85rem;
+}
+
+.greek-item span {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+/* Stock Option Info */
+.stock-option-info {
+  margin: 10px 0;
+  padding: 10px;
+  background: rgba(0, 0, 0, 0.1);
+  border-radius: 6px;
+  font-size: 0.85rem;
+}
+
+.stock-option-row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 6px;
+}
+
+.stock-option-row:last-child {
+  margin-bottom: 0;
+}
+
+.option-badge {
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-weight: 700;
+  font-size: 0.75rem;
+}
+
+.option-badge.call {
+  background: #10b981;
+  color: white;
+}
+
+.option-badge.put {
+  background: #ef4444;
+  color: white;
+}
+
+@media (max-width: 768px) {
+  .option-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .greeks-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
